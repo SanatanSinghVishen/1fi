@@ -1,14 +1,11 @@
 import { Link } from 'react-router-dom';
-
-const API_BASE = import.meta.env.VITE_API_URL || import.meta.env.API_URL || '';
+import { getProductImageUrl } from '../utils/imageHelper';
 
 export default function ProductCard({ product }) {
   const firstVariant = product.variants?.[0];
   if (!firstVariant) return null;
 
-  const imageUrl = firstVariant.images?.[0]
-    ? `${API_BASE}${firstVariant.images[0]}`
-    : '/placeholder.png';
+  const imageUrl = getProductImageUrl(firstVariant.images?.[0]);
 
   const formatPrice = (price) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
@@ -45,6 +42,10 @@ export default function ProductCard({ product }) {
           <img
             src={imageUrl}
             alt={product.name}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/placeholder.svg';
+            }}
             className="w-44 h-52 object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-sm"
             loading="lazy"
           />

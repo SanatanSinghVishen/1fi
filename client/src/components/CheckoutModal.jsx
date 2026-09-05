@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-const API_BASE = import.meta.env.VITE_API_URL || import.meta.env.API_URL || '';
+import { getProductImageUrl } from '../utils/imageHelper';
 
 export default function CheckoutModal({
   isOpen,
@@ -24,9 +23,7 @@ export default function CheckoutModal({
       maximumFractionDigits: 0,
     }).format(price);
 
-  const imageUrl = variant.images?.[0]
-    ? `${API_BASE}${variant.images[0]}`
-    : '/placeholder.png';
+  const imageUrl = getProductImageUrl(variant.images?.[0]);
 
   // 2x safe portfolio margin required for lien
   const requiredLienPortfolio = Math.round(variant.price * 2);
@@ -82,6 +79,10 @@ export default function CheckoutModal({
                   <img
                     src={imageUrl}
                     alt={product.name}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/placeholder.svg';
+                    }}
                     className="w-full h-full object-contain"
                   />
                 </div>

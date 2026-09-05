@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" rx="24" fill="#EFDAFF" fill-opacity="0.4"/>
+  <rect x="120" y="80" width="160" height="240" rx="28" stroke="#6C28D9" stroke-width="3" stroke-opacity="0.4" fill="white"/>
+  <rect x="155" y="96" width="90" height="16" rx="8" fill="#6C28D9" fill-opacity="0.15"/>
+  <circle cx="200" cy="200" r="32" fill="#6C28D9" fill-opacity="0.1"/>
+  <path d="M190 190L210 210M210 190L190 210" stroke="#6C28D9" stroke-width="2" stroke-linecap="round"/>
+  <text x="200" y="270" text-anchor="middle" fill="#6C28D9" font-family="sans-serif" font-size="12" font-weight="600" opacity="0.6">1Fi Marketplace</text>
+</svg>

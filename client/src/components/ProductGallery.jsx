@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-const API_BASE = import.meta.env.VITE_API_URL || import.meta.env.API_URL || '';
+import { getProductImageUrl } from '../utils/imageHelper';
 
 export default function ProductGallery({ images = [], productName = '' }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -8,8 +7,8 @@ export default function ProductGallery({ images = [], productName = '' }) {
   // Ensure selected index is always valid for current images array
   const activeIndex = selectedIndex < images.length ? selectedIndex : 0;
 
-  const imageUrls = images.map((img) => `${API_BASE}${img}`);
-  const currentImage = imageUrls[activeIndex] || '/placeholder.png';
+  const imageUrls = images.map((img) => getProductImageUrl(img));
+  const currentImage = imageUrls[activeIndex] || '/placeholder.svg';
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
@@ -29,6 +28,10 @@ export default function ProductGallery({ images = [], productName = '' }) {
               <img
                 src={url}
                 alt={`${productName} thumbnail ${i + 1}`}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
                 className="w-full h-full object-contain"
               />
             </button>
@@ -42,6 +45,10 @@ export default function ProductGallery({ images = [], productName = '' }) {
           key={currentImage}
           src={currentImage}
           alt={productName}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/placeholder.svg';
+          }}
           className="max-w-full max-h-[420px] object-contain transition-all duration-300 transform group-hover:scale-105"
         />
       </div>
