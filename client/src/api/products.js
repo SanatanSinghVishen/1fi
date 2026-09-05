@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { mockProducts } from './mockData';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || import.meta.env.API_URL || '';
 
 const api = axios.create({
   baseURL: `${API_BASE}/api`,

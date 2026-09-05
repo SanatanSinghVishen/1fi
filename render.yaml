@@ -39,7 +39,7 @@ services:
         source: /*
         destination: /index.html
     envVars:
-      - key: VITE_API_URL
+      - key: API_URL
         fromService:
           type: web
           name: onefi-marketplace-api
