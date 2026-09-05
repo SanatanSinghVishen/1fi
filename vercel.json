@@ -3,10 +3,9 @@
   "framework": "vite",
   "buildCommand": "cd client && npm install && npm run build",
   "outputDirectory": "client/dist",
-  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|images/|favicon.svg|placeholder.svg).*)",
       "destination": "/index.html"
     }
   ]
