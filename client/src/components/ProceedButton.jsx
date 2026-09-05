@@ -1,12 +1,12 @@
-export default function ProceedButton({ selectedPlan, disabled = false }) {
+export default function ProceedButton({ selectedPlan, onProceed, disabled = false }) {
   const formatPrice = (price) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
 
   const handleClick = () => {
     if (!selectedPlan) return;
-    alert(
-      `✅ Proceeding with ${selectedPlan.tenure}-month EMI plan\n\nMonthly: ${formatPrice(selectedPlan.monthlyPayment)}\nTotal: ${formatPrice(selectedPlan.totalAmount)}\nInterest: ${selectedPlan.interestRate}%\n\nThis would redirect to the payment/pledge flow in the full 1Fi app.`
-    );
+    if (onProceed) {
+      onProceed(selectedPlan);
+    }
   };
 
   return (

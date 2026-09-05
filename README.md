@@ -385,37 +385,54 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🚢 Deployment Guide
 
-### Deploy Backend to Render
+### Option A: 1-Click Render Blueprint (Full Stack)
+The repository includes a ready-to-use [`render.yaml`](file:///d:/1fi%20Marketplace/render.yaml) Blueprint:
+1. Push your code to GitHub.
+2. In [Render](https://dashboard.render.com), click **New** → **Blueprint**.
+3. Select this repository.
+4. Render automatically configures:
+   - **`onefi-marketplace-api`** (Node.js Web Service on port 5000 with Prisma migrations & seed).
+   - **`onefi-marketplace-web`** (Static Site with SPA rewrites connected to the API).
+5. Set `DATABASE_URL` in the Render dashboard for your PostgreSQL instance.
+
+---
+
+### Option B: Deploy Backend on Render & Frontend on Vercel
+
+#### 1. Backend on Render
 1. Create a **Web Service** on [Render](https://render.com).
 2. Connect your GitHub repository and set **Root Directory** to `server`.
-3. Set **Build Command**: `npm install && npx prisma generate && npx prisma db push && npm run seed`
-4. Set **Start Command**: `npm run start`
+3. Set **Build Command**: `npm run build` (or `npm install && npx prisma generate && npx prisma db push && npm run seed`)
+4. Set **Start Command**: `npm start`
 5. Add Environment Variables:
-   - `DATABASE_URL`: Your PostgreSQL connection string (e.g. from Render Postgres or Neon)
+   - `DATABASE_URL`: Your PostgreSQL connection string (e.g. from Neon, Supabase, or Render)
    - `PORT`: `5000`
-   - `CLIENT_URL`: Your Vercel frontend URL (or `*`)
+   - `CLIENT_URL`: Your Vercel frontend URL (e.g., `https://onefi-marketplace.vercel.app`, or `*`)
 
-### Deploy Frontend to Vercel
+#### 2. Frontend on Vercel
 1. Import the repository into [Vercel](https://vercel.com).
-2. Set **Root Directory** to `client`.
-3. Set **Framework Preset** to `Vite`.
-4. Add Environment Variable:
+2. If importing root: Vercel will automatically use [`vercel.json`](file:///d:/1fi%20Marketplace/vercel.json). If setting **Root Directory** to `client`, Vercel uses [`client/vercel.json`](file:///d:/1fi%20Marketplace/client/vercel.json) with pre-configured SPA routing rewrites.
+3. Add Environment Variable:
    - `VITE_API_URL`: Your Render backend service URL (e.g., `https://onefi-marketplace-api.onrender.com`)
-5. Click **Deploy**.
+4. Click **Deploy**. Both deep links (`/shop`, `/products/:slug`) and browser refresh work flawlessly out of the box!
 
 ---
 
 ## 🧪 Verification & Testing
 
-- **Backend API Tests:**
+- **Backend Health & Products API:**
   ```bash
-  # In project root:
-  node -e "const http = require('http'); http.get('http://localhost:5000/api/products', r => r.pipe(process.stdout));"
+  # Check backend health
+  curl http://localhost:5000/api/health
+
+  # Check products list
+  curl http://localhost:5000/api/products
   ```
-- **Client Production Build:**
+- **Client Lint & Production Build:**
   ```bash
   cd client
-  npm run build
+  npm run lint   # 0 errors, 0 warnings
+  npm run build  # Vite production bundle
   ```
 
 ---
@@ -424,49 +441,53 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```
 1fi-marketplace/
-├── client/                           # React frontend (Vite)
+├── render.yaml                       # Render Blueprint (Infrastructure-as-Code)
+├── vercel.json                       # Vercel monorepo deployment config
+├── client/                           # React 19 Frontend (Vite + Tailwind v4)
+│   ├── vercel.json                   # Vercel SPA routing & asset cache rules
+│   ├── .env.example                  # Client environment template (VITE_API_URL)
 │   ├── public/
-│   │   └── images/                   # Smartphone product images
+│   │   ├── favicon.svg               # Official 1Fi vector logo glyph
+│   │   ├── icons.svg                 # 1Fi SVG symbol sprite
+│   │   └── images/                   # Smartphone flagship images (.webp)
 │   ├── src/
 │   │   ├── api/
-│   │   │   └── products.js           # Axios API client
+│   │   │   ├── products.js           # Axios API client with dynamic live & fallback
+│   │   │   └── mockData.js           # Client fallback dataset for 100% uptime
 │   │   ├── components/
-│   │   │   ├── Navbar.jsx            # 1Fi floating navigation
-│   │   │   ├── ShopTabs.jsx          # Top Brands / Nearby Stores / 1Fi Marketplace
-│   │   │   ├── ProductCard.jsx       # 1Fi lavender product card (#EFDAFF)
-│   │   │   ├── ProductGallery.jsx    # Image viewer with thumbnail strip
+│   │   │   ├── Navbar.jsx            # 1Fi floating navigation with official logo & mobile menu
+│   │   │   ├── ShopTabs.jsx          # Top Brands / Nearby Stores / 1Fi Marketplace tabs
+│   │   │   ├── ProductCard.jsx       # 1Fi tactile product card (#EFDAFF) with EMI teaser & colors
+│   │   │   ├── ProductGallery.jsx    # Image viewer with thumbnail carousel
 │   │   │   ├── VariantSelector.jsx   # Color swatches + storage chips
-│   │   │   ├── EMIPlanCard.jsx       # Radio selectable EMI plan card
+│   │   │   ├── EMIPlanCard.jsx       # Selectable EMI plan card with cashbacks
 │   │   │   ├── EMIPlanList.jsx       # EMI plans list container
-│   │   │   └── ProceedButton.jsx     # 1Fi press effect CTA button
+│   │   │   ├── ProceedButton.jsx     # Tactile 1Fi press effect CTA button
+│   │   │   ├── CheckoutModal.jsx     # 1Fi Mutual Fund Lien Checkout Sheet & OTP verification
+│   │   │   └── Footer.jsx            # Authentic 1Fi footer with AMFI note & disclaimers
 │   │   ├── pages/
-│   │   │   ├── ShopPage.jsx          # /shop with 3 tabs
+│   │   │   ├── ShopPage.jsx          # /shop with brand filter pills, search & LAMF guide
 │   │   │   └── ProductPage.jsx       # /products/:slug dynamic detail page
-│   │   ├── App.jsx                   # React Router setup
+│   │   ├── App.jsx                   # React Router DOM v7 layout
 │   │   ├── main.jsx
 │   │   └── index.css                 # Tailwind v4 & Google Font Inter
-│   ├── index.html
-│   ├── vite.config.js
+│   ├── index.html                    # 1Fi branding, SEO & SVG favicon
+│   ├── vite.config.js                # Vite proxy & Tailwind plugin
 │   └── package.json
-│
-├── server/                           # Express backend
-│   ├── prisma/
-│   │   ├── schema.prisma             # PostgreSQL schema (Product, Variant, EMIPlan)
-│   │   └── seed.js                   # Prisma seed script
-│   ├── public/
-│   │   └── images/                   # Static product images
-│   ├── src/
-│   │   ├── controllers/
-│   │   │   └── productController.js  # Product listing and detail resolver
-│   │   ├── data/
-│   │   │   └── productsData.js       # Seed and fallback dataset
-│   │   ├── routes/
-│   │   │   └── products.js           # /api/products router
-│   │   └── index.js                  # Express app entry
-│   ├── .env.example
-│   └── package.json
-│
-└── README.md                         # Comprehensive documentation
+└── server/                           # Express.js 5 REST API Server
+    ├── .env                          # Server environment config
+    ├── prisma/
+    │   ├── schema.prisma             # PostgreSQL schema (Product, Variant, EMIPlan)
+    │   └── seed.js                   # Seed script for 3 flagship smartphones
+    ├── src/
+    │   ├── controllers/
+    │   │   └── productController.js  # Controller with PostgreSQL & seed fallback
+    │   ├── data/
+    │   │   └── productsData.js       # Seed dataset
+    │   ├── routes/
+    │   │   └── products.js           # REST routes (/api/products)
+    │   └── index.js                  # Express app entry point with dynamic CORS
+    └── package.json
 ```
 
 ---

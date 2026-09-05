@@ -9,9 +9,17 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+const allowedOrigins = (process.env.CLIENT_URL || '*').split(',').map((u) => u.trim());
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
-  methods: ['GET'],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true,
 }));
 app.use(express.json());
 
